@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Addin namespace="TwinTechs"
+	id="EditorComfortAddin"
+	name="Editor Comfor tAddin"
+	author="George James Edward Cook"
+	copyright="2015 George James Edward Cook"
+	description="Editor Comfort Addin"
+	category="IDE extensions"
+	version="1.0">
+	<Dependencies>
+		<Addin id="::MonoDevelop.Core"
+			version="5.8.3" />
+		<Addin id="::MonoDevelop.Ide"
+			version="5.8.3" />
+		<Addin id="::MonoDevelop.SourceEditor2"
+			version="4.0" />
+	</Dependencies>
+	<Runtime>
+	</Runtime>
+	<Extension path="/MonoDevelop/Ide/Pads">
+	</Extension>
+	<Extension path="/MonoDevelop/Ide/Commands">
+		<Command id="TwinTechs.EditorExtensions.ShowMembers"
+			_label="Show Members"
+			_description="Toggle members"
+			shortcut="Ctrl|F12"
+			macShortcut="Ctrl|F12"
+			defaultHandler="TwinTechs.EditorExtensions.ShowMembers" />
+		<Command id="TwinTechs.EditorExtensions.PreviousMember"
+			_label="Previous Member"
+			_description="Previous Member"
+			shortcut="Ctrl|Up"
+			macShortcut="Ctrl|Up"
+			defaultHandler="TwinTechs.EditorExtensions.PreviousMember" />
+
+		<Command id="TwinTechs.EditorExtensions.NextMember"
+			_label="Next Membber"
+			_description="Next Membber"
+			shortcut="Ctrl|Down"
+			macShortcut="Ctrl|Down"
+			defaultHandler="TwinTechs.EditorExtensions.NextMember" />
+		<Command id="TwinTechs.EditorExtensions.ToggleViewModel"
+			_label="Cycle VM/Xaml/.cs"
+			_description="Cycles between the vm and xaml file"
+			shortcut="Shift|Meta|F9"
+			macShortcut="Shift|Meta|F9"
+			defaultHandler="TwinTechs.EditorExtensions.ToggleViewModel" />
+		<Command id="TwinTechs.EditorExtensions.ToggleViewModelPreferCodeBehind"
+			_label="Cycle VM/Xaml/.cs"
+			_description="Will cycle through the vm and code behind file"
+			shortcut="Shift|Meta|F10"
+			macShortcut="Shift|Meta|F10"
+			defaultHandler="TwinTechs.EditorExtensions.ToggleViewModelPreferCodeBehind" />
+		<Command id="TwinTechs.EditorExtensions.BrowseRecentDocument"
+			_label="Browse Recent Documents"
+			_description="Browse Recent Documents"
+			shortcut="Shift|Meta|E"
+			macShortcut="Shift|Meta|E"
+			defaultHandler="TwinTechs.EditorExtensions.ShowRecentDocumentBrowser" />
+	</Extension>
+
+	<Extension path="/MonoDevelop/Ide/MainMenu/Search">
+		<CommandItem id="TwinTechs.EditorExtensions.ShowMembers" />
+		<CommandItem id="TwinTechs.EditorExtensions.PreviousMember" />
+		<CommandItem id="TwinTechs.EditorExtensions.NextMember" />
+		<CommandItem id="TwinTechs.EditorExtensions.ToggleViewModel" />
+		<CommandItem id="TwinTechs.EditorExtensions.ToggleViewModelPreferCodeBehind" />
+		<CommandItem id="TwinTechs.EditorExtensions.BrowseRecentDocument" />
+	</Extension>
+</Addin>
