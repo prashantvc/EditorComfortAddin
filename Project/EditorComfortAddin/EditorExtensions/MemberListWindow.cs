@@ -16,6 +16,9 @@ using System.Collections;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Runtime.InteropServices;
+using Mono.CSharp;
+using Mono.CSharp.Linq;
+using ICSharpCode.NRefactory.TypeSystem.Implementation;
 
 namespace TwinTechs.EditorExtensions
 {
@@ -235,10 +238,12 @@ namespace TwinTechs.EditorExtensions
 		{
 			_treeView = new Gtk.TreeView ();
 			_treeView.SetSizeRequest (500, 600);
+
 			//type
 			var typeColumn = new Gtk.TreeViewColumn ();
 			typeColumn.Title = "Type";
-			typeColumn.MaxWidth = 150;
+			typeColumn.MaxWidth = 50;
+			// Do the same for the song title column
 			var typeCell = new Gtk.CellRendererText ();
 			typeColumn.PackStart (typeCell, true);
 
@@ -249,25 +254,23 @@ namespace TwinTechs.EditorExtensions
 			var nameCell = new Gtk.CellRendererText ();
 			nameColumn.PackStart (nameCell, true);
 
-			//name
-			var visibilityColumn = new Gtk.TreeViewColumn ();
-			visibilityColumn.Title = "Visibility";
-			visibilityColumn.MaxWidth = 50;
-			// Do the same for the song title column
-			var visibilityCell = new Gtk.CellRendererText ();
-			visibilityColumn.PackStart (visibilityCell, true);
-
+			//info
+			var infoColumn = new Gtk.TreeViewColumn ();
+			infoColumn.Title = "Info";
+			infoColumn.MaxWidth = 150;
+			var infoCell = new Gtk.CellRendererText ();
+			infoColumn.PackStart (infoCell, true);
 
 
 
 			// Add the columns to the TreeView
 			_treeView.AppendColumn (typeColumn);
 			_treeView.AppendColumn (nameColumn);
-			_treeView.AppendColumn (visibilityColumn);
+			_treeView.AppendColumn (infoColumn);
 
-			visibilityColumn.AddAttribute (visibilityCell, "text", 0);
+			typeColumn.AddAttribute (typeCell, "text", 0);
 			nameColumn.AddAttribute (nameCell, "text", 1);
-			typeColumn.AddAttribute (typeCell, "text", 2);
+			infoColumn.AddAttribute (infoCell, "text", 2);
 
 			_treeView.Selection.Mode = Gtk.SelectionMode.Single;
 			_treeView.Selection.Changed += _treeView_Selection_Changed;
@@ -332,7 +335,17 @@ namespace TwinTechs.EditorExtensions
 			}
 			foreach (var entity in _filteredEntities) {
 				//TODO improve this
-				_listStore.AppendValues (entity.Accessibility.ToString ().Substring (0, 1), entity.Name, "");
+				var info = "";
+				var method = entity as DefaultUnresolvedMethod;
+				if (method != null) {
+					
+					var typeInfo = method.Parameters.Select ((arg) => {
+						return arg.Name + ":" + arg.Type.ToString ();
+					}
+					               );
+					info = "(" + String.Join (" , ", typeInfo) + " )";
+				}
+				_listStore.AppendValues (entity.SymbolKind.ToString ().Substring (0, 1), entity.Name, info);
 			}
 			_treeView.Model = _listStore;
 
