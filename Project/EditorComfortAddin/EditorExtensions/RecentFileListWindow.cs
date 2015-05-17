@@ -26,8 +26,8 @@ namespace TwinTechs.EditorExtensions
 		Gtk.Entry _searchView;
 		Gtk.ListStore _listStore;
 		bool keyHandled = false;
-		Collection<Document> _filteredDocuments;
-		Document _selectedDocument;
+		Collection<FileOpenInformation> _filteredDocuments;
+		FileOpenInformation _selectedDocument;
 
 		Gtk.Label _pathLabel;
 
@@ -35,9 +35,7 @@ namespace TwinTechs.EditorExtensions
 
 		public RecentFileListWindow (string title, Gtk.Window parent, DialogFlags flags, params object[] button_data) : base (title, parent, flags, button_data)
 		{
-			if (IdeApp.Workbench == null) {
-				return;
-			}
+			
 			_searchView = new Gtk.Entry ("");
 			_searchView.SetSizeRequest (500, 40);
 			_searchView.Changed += _searchView_Changed;
@@ -55,15 +53,12 @@ namespace TwinTechs.EditorExtensions
 
 			MemberExtensionsHelper.Instance.IsDirty = true;
 			UpdateDocuments ();
-			var editor = IdeApp.Workbench.ActiveDocument.Editor;
-			var visualInsertLocation = editor.LogicalToVisualLocation (editor.Caret.Location);
 			this.SetSizeRequest (500, 700);
 
 			CanFocus = true;
 			_searchView.CanFocus = true;
 			_searchView.IsEditable = true;
 			_searchView.GrabFocus ();
-			_searchView.FocusOutEvent += (o, args) => Console.WriteLine ("lost focus");
 			ShowAll ();
 
 		}
@@ -158,6 +153,7 @@ namespace TwinTechs.EditorExtensions
 				}
 				return KeyActions.Ignore;
 			case Gdk.Key.Escape:
+				_selectedDocument = null;
 				return KeyActions.Complete | KeyActions.Ignore | KeyActions.CloseWindow;
 			case Gdk.Key.Down:
 				if (_selectedIndex + 1 < _filteredDocuments.Count) {
@@ -230,8 +226,9 @@ namespace TwinTechs.EditorExtensions
 
 		void SelectRowIndex (int index)
 		{
-			Console.WriteLine ("SelectRowIndex " + index);
+//			Console.WriteLine ("SelectRowIndex " + index);
 			_treeView.Selection.SelectIter (GetTreeIterForRow (index));
+			_pathLabel.Text = _selectedDocument.FileName.FileName;
 		}
 
 		void CreateTree ()
@@ -279,9 +276,7 @@ namespace TwinTechs.EditorExtensions
 		void CloseWindow (bool moveToSelectedEntry = false)
 		{
 			if (_selectedDocument != null) {
-				
-				var info = new FileOpenInformation (_selectedDocument.FileName, _selectedDocument.Project);
-				IdeApp.Workbench.OpenDocument (info);
+				IdeApp.Workbench.OpenDocument (_selectedDocument);
 			}
 
 			Gtk.Application.Invoke ((s, ev) => DestroyWindow ());
@@ -302,12 +297,12 @@ namespace TwinTechs.EditorExtensions
 			var documents = FileHistoryHelper.Instance.GetRecentDocuments (); //TODO filter
 			var filterText = _searchView.Text;
 			if (string.IsNullOrEmpty (filterText)) {
-				_filteredDocuments = new Collection<Document> (documents);
+				_filteredDocuments = new Collection<FileOpenInformation> (documents);
 			} else {
 				var filteredDocuments = documents.Where (e => {
 					return MemberMatchingHelper.GetMatchWithSearchText (filterText, e.FileName.FileNameWithoutExtension);
 				}).ToList ();
-				_filteredDocuments = new Collection<Document> (filteredDocuments);
+				_filteredDocuments = new Collection<FileOpenInformation> (filteredDocuments);
 			}
 			foreach (var document in _filteredDocuments) {
 				//TODO improve this
@@ -317,12 +312,13 @@ namespace TwinTechs.EditorExtensions
 
 			_treeView.Model = _listStore;
 
-			if (_selectedDocument != null) {
-				var newIndex = _filteredDocuments.IndexOf (_selectedDocument);
-				SelectRowIndex (newIndex == -1 ? 0 : newIndex);
-				_pathLabel.Text = _selectedDocument.FileName.FileName;
-			} else {
-				SelectRowIndex (0);
+			if (_filteredDocuments.Count > 0) {
+				if (_selectedDocument != null) {
+					var newIndex = _filteredDocuments.IndexOf (_selectedDocument);
+					SelectRowIndex (newIndex == -1 ? 0 : newIndex);
+				} else {
+					SelectRowIndex (0);
+				}
 			}
 		}
 

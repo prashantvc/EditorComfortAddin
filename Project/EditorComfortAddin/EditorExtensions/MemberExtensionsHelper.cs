@@ -32,6 +32,8 @@ namespace TwinTechs.EditorExtensions
 
 		#region public api
 
+		DateTime _lastUpdateTime;
+
 		/// <summary>
 		/// Gets the entities.
 		/// </summary>
@@ -43,7 +45,19 @@ namespace TwinTechs.EditorExtensions
 			if (_mostRecentDocument != IdeApp.Workbench.ActiveDocument) {
 				_mostRecentDocument = IdeApp.Workbench.ActiveDocument;
 				_mostRecentDocument.UpdateParseDocument ();
+				IsDirty = true;
 			}
+			if (_lastUpdateTime == null) {
+				IsDirty = true;
+			} else {
+				//TODO would be nice to get real dirty flag on the docs editor
+				var now = DateTime.Now;
+				var secondsSinceLastInvocation = (now - _lastUpdateTime).TotalSeconds;
+				if (secondsSinceLastInvocation > 2) {
+					IsDirty = true;
+				}
+			}
+
 			if (IsDirty || _cachedEntities == null) {
 				IdeApp.Workbench.ActiveDocument.UpdateParseDocument ();
 				_cachedEntities = new Collection<IUnresolvedEntity> ();
@@ -54,6 +68,7 @@ namespace TwinTechs.EditorExtensions
 						_cachedEntities.Add (member);
 					}
 				}
+				_lastUpdateTime = DateTime.Now;
 				IsDirty = false;
 			}
 
@@ -71,7 +86,7 @@ namespace TwinTechs.EditorExtensions
 			if (member != null) {
 				var memberType = selectedMember as IUnresolvedEntity;
 				var region = memberType.Region;
-				editor.SetCaretTo (region.BeginLine, region.BeginColumn);
+				editor.SetCaretTo (region.BeginLine, region.BeginColumn, true, false);
 				editor.ScrollToCaret ();
 			}
 		}
@@ -133,7 +148,6 @@ namespace TwinTechs.EditorExtensions
 		/// </summary>
 		public void GotoNextEntity ()
 		{
-			IsDirty = true;
 			var member = GetEntityAtCaret ();
 			if (member == null) {
 				member = GetNearestEntity (true);
@@ -157,7 +171,6 @@ namespace TwinTechs.EditorExtensions
 		/// </summary>
 		public void GotoPreviousEntity ()
 		{
-			IsDirty = true;
 			var member = GetEntityAtCaret ();
 			var editor = IdeApp.Workbench.ActiveDocument.Editor;
 			if (member == null) {

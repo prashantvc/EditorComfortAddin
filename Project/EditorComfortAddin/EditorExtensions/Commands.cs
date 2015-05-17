@@ -8,8 +8,10 @@ namespace TwinTechs.EditorExtensions
 	{
 		protected override void Run ()
 		{
-			var memberListWindow = new MemberListWindow ("Members", IdeApp.Workbench.RootWindow, Gtk.DialogFlags.Modal);
-			memberListWindow.Run ();
+			if (IdeApp.Workbench?.ActiveDocument != null) {
+				var memberListWindow = new MemberListWindow ("Members", IdeApp.Workbench.RootWindow, Gtk.DialogFlags.Modal);
+				memberListWindow.Run ();
+			}
 		}
 
 		protected override void Update (CommandInfo info)
@@ -81,8 +83,10 @@ namespace TwinTechs.EditorExtensions
 	{
 		protected override void Run ()
 		{
-			var recentDocumentsWindow = new RecentFileListWindow ("Browse Recent Documents", IdeApp.Workbench.RootWindow, Gtk.DialogFlags.Modal);
-			recentDocumentsWindow.Run ();
+			if (IdeApp.Workspace.IsOpen) {
+				var recentDocumentsWindow = new RecentFileListWindow ("Browse Recent Documents", IdeApp.Workbench.RootWindow, Gtk.DialogFlags.Modal);
+				recentDocumentsWindow.Run ();
+			}
 		}
 
 		protected override void Update (CommandInfo info)

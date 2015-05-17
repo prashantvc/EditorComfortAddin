@@ -60,7 +60,6 @@ namespace TwinTechs.EditorExtensions
 			_searchView.CanFocus = true;
 			_searchView.IsEditable = true;
 			_searchView.GrabFocus ();
-			_searchView.FocusOutEvent += (o, args) => Console.WriteLine ("lost focus");
 			ShowAll ();
 
 		}
@@ -155,6 +154,7 @@ namespace TwinTechs.EditorExtensions
 				}
 				return KeyActions.Ignore;
 			case Gdk.Key.Escape:
+				_selectedEntry = null;
 				return KeyActions.Ignore | KeyActions.CloseWindow;
 			case Gdk.Key.Down:
 				if (_selectedIndex + 1 < _filteredEntities.Count) {
@@ -227,7 +227,7 @@ namespace TwinTechs.EditorExtensions
 
 		void SelectRowIndex (int index)
 		{
-			Console.WriteLine ("SelectRowIndex " + index);
+//			Console.WriteLine ("SelectRowIndex " + index);
 			_treeView.Selection.SelectIter (GetTreeIterForRow (index));
 		}
 
