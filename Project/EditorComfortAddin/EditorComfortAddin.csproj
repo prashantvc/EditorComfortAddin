@@ -34,10 +34,6 @@
     <Reference Include="System.Xml" />
     <Reference Include="System.Core" />
     <Reference Include="Mono.Addins" />
-    <Reference Include="MonoDevelop.Core" />
-    <Reference Include="MonoDevelop.Ide" />
-    <Reference Include="Mono.TextEditor" />
-    <Reference Include="ICSharpCode.NRefactory" />
     <Reference Include="gtk-sharp" />
     <Reference Include="glib-sharp" />
     <Reference Include="gdk-sharp" />
@@ -54,6 +50,7 @@
     <Compile Include="EditorExtensions\FileHistoryHelper.cs" />
     <Compile Include="EditorExtensions\RecentFileListWindow.cs" />
     <Compile Include="EditorExtensions\IdeHelper.cs" />
+    <Compile Include="Properties\AddinInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\Manifest.addin.xml" />
@@ -62,6 +59,8 @@
   <Import Project="..\packages\MonoDevelop.Addins.0.2.3\build\net40\MonoDevelop.Addins.targets" Condition="Exists('..\packages\MonoDevelop.Addins.0.2.3\build\net40\MonoDevelop.Addins.targets')" />
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="Properties\iconTwin32.png" />
+    <None Include="addin-project.xml" />
   </ItemGroup>
   <ItemGroup>
     <AddinReference Include="MonoDevelop.CSharpBinding" />

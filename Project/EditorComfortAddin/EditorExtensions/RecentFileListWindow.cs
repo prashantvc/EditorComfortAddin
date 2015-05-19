@@ -228,7 +228,7 @@ namespace TwinTechs.EditorExtensions
 		{
 //			Console.WriteLine ("SelectRowIndex " + index);
 			_treeView.Selection.SelectIter (GetTreeIterForRow (index));
-			_pathLabel.Text = _selectedDocument.FileName.FileName;
+			_pathLabel.Text = _selectedDocument.FileName.FullPath.ToString ();
 		}
 
 		void CreateTree ()
@@ -300,13 +300,13 @@ namespace TwinTechs.EditorExtensions
 				_filteredDocuments = new Collection<FileOpenInformation> (documents);
 			} else {
 				var filteredDocuments = documents.Where (e => {
-					return MemberMatchingHelper.GetMatchWithSearchText (filterText, e.FileName.FileNameWithoutExtension);
+					return MemberMatchingHelper.GetMatchWithSearchText (filterText, e.FileName.FileName);
 				}).ToList ();
 				_filteredDocuments = new Collection<FileOpenInformation> (filteredDocuments);
 			}
 			foreach (var document in _filteredDocuments) {
 				//TODO improve this
-				var name = document.FileName.FileNameWithoutExtension;
+				var name = document.FileName.FileName;
 				_listStore.AppendValues (name);
 			}
 

@@ -1,0 +1,10 @@
+﻿<AddinProject appVersion="1.0">
+	<Project platforms="Mac Linux">
+		<AddinFile>bin/release/EditorComfortAddin.dll</AddinFile>
+		<BuildConfiguration>Release</BuildConfiguration>
+	</Project>
+	<Project platforms="Win32">
+		<AddinFile>bin/release/EditorComfortAddin.dll</AddinFile>
+		<BuildConfiguration>Release</BuildConfiguration>
+	</Project>
+</AddinProject>
