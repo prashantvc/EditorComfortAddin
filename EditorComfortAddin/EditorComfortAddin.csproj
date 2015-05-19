@@ -60,7 +60,6 @@
   <ItemGroup>
     <None Include="packages.config" />
     <None Include="Properties\iconTwin32.png" />
-    <None Include="addin-project.xml" />
   </ItemGroup>
   <ItemGroup>
     <AddinReference Include="MonoDevelop.CSharpBinding" />
