@@ -5,7 +5,7 @@ using Mono.Addins.Description;
 [assembly:Addin (
 	"Editor Comfort Additions", 
 	Namespace = "TwinTechs.EditorExtensions",
-	Version = "1.0"
+	Version = "1.0.1"
 )]
 
 [assembly:AddinName ("Editor Comfort Additions")]

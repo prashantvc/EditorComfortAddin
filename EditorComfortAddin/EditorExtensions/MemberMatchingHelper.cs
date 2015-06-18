@@ -28,6 +28,7 @@ namespace TwinTechs.EditorExtensions
 			var startPartIndex = 0;
 			var numberOfSourceParts = sourceParts.Length;
 			bool didMatch = false;
+		
 
 			while (!didMatch && (startPartIndex + numberOfSourceParts <= parts.Length)) {
 
@@ -39,7 +40,6 @@ namespace TwinTechs.EditorExtensions
 					}
 					var currentItemPart = parts [index];
 					var sourcePart = sourceParts [index - startPartIndex];
-
 					if (!char.IsUpper (sourcePart, 0)) {
 						if (!(currentItemPart.ToUpper ().Contains (sourcePart.ToUpper ()))) {
 							failedMatch = true;
@@ -65,6 +65,18 @@ namespace TwinTechs.EditorExtensions
 				startPartIndex++;
 				didMatch = !failedMatch;
 			}
+			if (!didMatch) {
+				var upperSearchText = searchText.ToUpper ();
+				var upperTargetText = targetText.ToUpper ();
+				if (upperSearchText == upperTargetText) {
+					didMatch = true;
+				}
+
+				if (upperTargetText.Contains (upperSearchText)) {
+					didMatch = true;
+				}
+			}
+
 			return didMatch;
 		}
 

@@ -60,16 +60,19 @@ namespace TwinTechs.EditorExtensions
 
 		void IdeApp_Workbench_ActiveDocumentChanged (object sender, EventArgs e)
 		{
-			if (_previousDocument != null) {
+			if (_previousDocument != null && _previousDocument.Editor != null && _previousDocument.Editor.Caret != null) {
 				UpdateFileOpenInfo (_previousDocument, _previousDocument.Editor.Caret.Line, _previousDocument.Editor.Caret.Column);
 			}
 
-			if (IdeApp.Workbench.ActiveDocument != null) {
+			if (IdeApp.Workbench != null && IdeApp.Workbench.ActiveDocument != null) {
 				var document = IdeApp.Workbench.ActiveDocument;
-				var existingFileInfo = _recentDocuments.FirstOrDefault ((arg) => arg.Project == document.Project && arg.FileName.FullPath == document.FileName.FullPath);
-				var lineNumber = existingFileInfo?.Line ?? 1;
-				var column = existingFileInfo?.Column ?? 1;
-				UpdateFileOpenInfo (document, lineNumber, column);
+				if (document != null && document.FileName != null) {
+					
+					var existingFileInfo = _recentDocuments.FirstOrDefault ((arg) => arg.Project == document.Project && arg.FileName.FullPath == document.FileName.FullPath);
+					var lineNumber = existingFileInfo?.Line ?? 1;
+					var column = existingFileInfo?.Column ?? 1;
+					UpdateFileOpenInfo (document, lineNumber, column);
+				}
 			}
 			_previousDocument = IdeApp.Workbench.ActiveDocument;
 
@@ -79,13 +82,18 @@ namespace TwinTechs.EditorExtensions
 
 		void UpdateFileOpenInfo (MonoDevelop.Ide.Gui.Document document, int line, int column)
 		{
-			var existingFileInfo = _recentDocuments.FirstOrDefault ((arg) => arg.Project == document.Project && arg.FileName.FullPath == document.FileName.FullPath);
-			if (existingFileInfo != null) {
-				_recentDocuments.Remove (existingFileInfo);
-			}
-			if (GetProjectWithId (document.Project.ItemId) != null && File.Exists (document.FileName.FullPath)) {
-				var fileInfo = new FileOpenInformation (document.FileName.FullPath, document.Project, line, column, OpenDocumentOptions.BringToFront | OpenDocumentOptions.TryToReuseViewer);
-				_recentDocuments.Insert (0, fileInfo);
+			try {
+				
+				var existingFileInfo = _recentDocuments.FirstOrDefault ((arg) => arg.Project == document.Project && arg.FileName.FullPath == document.FileName.FullPath);
+				if (existingFileInfo != null) {
+					_recentDocuments.Remove (existingFileInfo);
+				}
+				if (GetProjectWithId (document.Project.ItemId) != null && File.Exists (document.FileName.FullPath)) {
+					var fileInfo = new FileOpenInformation (document.FileName.FullPath, document.Project, line, column, OpenDocumentOptions.BringToFront | OpenDocumentOptions.TryToReuseViewer);
+					_recentDocuments.Insert (0, fileInfo);
+				}
+			} catch (Exception ex) {
+				Console.WriteLine ("error updating file info " + ex.Message);
 			}
 
 		}
@@ -143,18 +151,18 @@ namespace TwinTechs.EditorExtensions
 		/// </summary>
 		void SaveHistory ()
 		{
-//			try {
-			var newItems = _recentDocuments.Select ((e) => new string[] {
-				e.FileName.FullPath,
-				e.Project.ItemId,
-				e.Column.ToString (),
-				e.Line.ToString ()
-			}).Where (data => File.Exists (data [0]));
-			var concatanated = newItems.Select ((string[] arg) => string.Join (PathDelimeter, arg));
-			File.WriteAllLines (GetSavedStatePath (), concatanated);
-//			} catch (Exception e) {
-//				Console.WriteLine ("error loading history " + e.Message);
-//			}
+			try {
+				var newItems = _recentDocuments.Select ((e) => new string[] {
+					e.FileName.FullPath,
+					e.Project.ItemId,
+					e.Column.ToString (),
+					e.Line.ToString ()
+				}).Where (data => File.Exists (data [0]));
+				var concatanated = newItems.Select ((string[] arg) => string.Join (PathDelimeter, arg));
+				File.WriteAllLines (GetSavedStatePath (), concatanated);
+			} catch (Exception e) {
+				Console.WriteLine ("error saving history " + e.Message);
+			}
 		}
 
 		/// <summary>

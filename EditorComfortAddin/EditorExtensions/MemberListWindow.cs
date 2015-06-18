@@ -345,7 +345,11 @@ namespace TwinTechs.EditorExtensions
 					               );
 					info = "(" + String.Join (" , ", typeInfo) + " )";
 				}
-				_listStore.AppendValues (entity.SymbolKind.ToString ().Substring (0, 1), entity.Name, info);
+				var name = entity.Name;
+				if (name == ".ctor") {
+					name = "*" + entity.DeclaringTypeDefinition.Name;
+				}
+				_listStore.AppendValues (entity.SymbolKind.ToString ().Substring (0, 1), name, info);
 			}
 			_treeView.Model = _listStore;
 

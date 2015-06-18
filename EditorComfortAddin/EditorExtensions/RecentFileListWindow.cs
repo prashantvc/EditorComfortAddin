@@ -228,7 +228,9 @@ namespace TwinTechs.EditorExtensions
 		{
 //			Console.WriteLine ("SelectRowIndex " + index);
 			_treeView.Selection.SelectIter (GetTreeIterForRow (index));
-			_pathLabel.Text = _selectedDocument.FileName.FullPath.ToString ();
+			var projectPath = _selectedDocument.Project.FileName.ParentDirectory;
+			var path = _selectedDocument.FileName.FullPath.ToString ().Replace (projectPath, "");
+			_pathLabel.Text = "[" + _selectedDocument.Project.Name + "] " + path;
 		}
 
 		void CreateTree ()
