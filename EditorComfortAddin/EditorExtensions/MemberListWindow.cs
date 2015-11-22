@@ -19,6 +19,7 @@ using System.Runtime.InteropServices;
 using Mono.CSharp;
 using Mono.CSharp.Linq;
 using ICSharpCode.NRefactory.TypeSystem.Implementation;
+using MonoDevelop.Ide.TypeSystem;
 
 namespace TwinTechs.EditorExtensions
 {
@@ -244,8 +245,10 @@ namespace TwinTechs.EditorExtensions
 			typeColumn.Title = "Type";
 			typeColumn.MaxWidth = 50;
 			// Do the same for the song title column
-			var typeCell = new Gtk.CellRendererText ();
+			var typeCell = new CellRendererImage ();
 			typeColumn.PackStart (typeCell, true);
+			typeColumn.SetCellDataFunc (typeCell, ResultTypeIconFunc);
+
 
 			//name
 			var nameColumn = new Gtk.TreeViewColumn ();
@@ -284,6 +287,25 @@ namespace TwinTechs.EditorExtensions
 				}
 			};
 
+		}
+
+		void ResultTypeIconFunc (TreeViewColumn column, CellRenderer cell, TreeModel model, TreeIter iter)
+		{
+			if (TreeIter.Zero.Equals (iter))
+				return;
+			
+			var typeCell = (CellRendererImage) cell;
+
+			var searchResult = (string)_listStore.GetValue (iter, 0);
+			if (searchResult == null)
+				return;
+
+			var icon = ImageService.GetIcon (searchResult, Gtk.IconSize.Menu);
+			if (icon == null) {
+				return;
+			}
+
+			typeCell.Image = icon;
 		}
 
 		void _treeView_Selection_Changed (object sender, EventArgs e)
@@ -337,6 +359,7 @@ namespace TwinTechs.EditorExtensions
 				//TODO improve this
 				var info = "";
 				var method = entity as DefaultUnresolvedMethod;
+
 				if (method != null) {
 					
 					var typeInfo = method.Parameters.Select ((arg) => {
@@ -349,7 +372,10 @@ namespace TwinTechs.EditorExtensions
 				if (name == ".ctor") {
 					name = "*" + entity.DeclaringTypeDefinition.Name;
 				}
-				_listStore.AppendValues (entity.SymbolKind.ToString ().Substring (0, 1), name, info);
+
+				var iconName = entity.GetStockIcon ();
+
+				_listStore.AppendValues (iconName, name, info);
 			}
 			_treeView.Model = _listStore;
 
@@ -360,6 +386,7 @@ namespace TwinTechs.EditorExtensions
 				SelectRowIndex (0);
 			}
 		}
+
 
 		#endregion
 
