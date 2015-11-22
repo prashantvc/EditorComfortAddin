@@ -1,7 +1,7 @@
 <AddinProject appVersion="4.0">
 	<Project platforms="Mac Linux Win32">
-		<AddinFile>CSharpInteractive/bin/Debug/CSharpInteractive.dll</AddinFile>
-		<BuildFile>CSharpInteractive.sln</BuildFile>
-		<BuildConfiguration>Debug</BuildConfiguration>
+		<AddinFile>EditorComfortAddin/bin/Release/EditorComfortAddin.dll</AddinFile>
+		<BuildFile>EditorComfortAddin.sln</BuildFile>
+		<BuildConfiguration>Release</BuildConfiguration>
 	</Project>
 </AddinProject>
