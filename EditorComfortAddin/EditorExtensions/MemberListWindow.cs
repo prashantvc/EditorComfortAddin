@@ -324,6 +324,8 @@ namespace TwinTechs.EditorExtensions
 			_searchView.FocusOutEvent -= HandleFocusOutEvent;
 
 			Visible = false;
+			_listStore.Dispose ();
+
 			Destroy ();
 		}
 
